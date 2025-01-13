@@ -10,11 +10,15 @@ if url != '':
     try:
         yt = YouTube(url)
         st.image(yt.thumbnail_url, width=300)
-        st.subheader('''
-        {}
-        ## Length: {} seconds
-        ## Rating: {} 
-        '''.format(yt.title, yt.length, yt.rating))
+        try:
+            st.subheader('''
+            {}
+            ## Length: {} seconds
+            ## Rating: {} 
+            '''.format(yt.title, yt.length, yt.rating))
+        except PytubeError as e:
+            st.error(f"An error occurred while accessing video details: {e}")
+        
         video = yt.streams
         if len(video) > 0:
             downloaded, download_audio = False, False
@@ -29,9 +33,7 @@ if url != '':
                 downloaded = True
             if downloaded:
                 st.subheader("Download Complete")
-                import subprocess
-                subprocess.run(["ls"])
         else:
-            st.subheader("Sorry, this video can not be downloaded")
+            st.subheader("Sorry, this video cannot be downloaded")
     except PytubeError as e:
         st.error(f"An error occurred: {e}")
