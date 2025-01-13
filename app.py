@@ -30,16 +30,16 @@ if url != '':
                 try:
                     video_streams.get_lowest_resolution().download()
                     st.subheader("Video Download Complete")
-                except PytubeError as e:
+                except Exception as e:
                     st.error(f"An error occurred while downloading the video: {e}")
             
             if download_audio:
                 try:
                     audio_streams.first().download()
                     st.subheader("Audio Download Complete")
-                except PytubeError as e:
+                except Exception as e:
                     st.error(f"An error occurred while downloading the audio: {e}")
         else:
             st.subheader("Sorry, this video cannot be downloaded")
-    except PytubeError as e:
+    except Exception as e:
         st.error(f"An error occurred: {e}")
