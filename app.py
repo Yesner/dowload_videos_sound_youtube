@@ -2,30 +2,38 @@ import streamlit as st
 import yt_dlp
 import os
 
+# Título de la aplicación
 st.title("YouTube Video Downloader")
-st.subheader("Descarga videos o audios de YouTube")
+st.subheader("Descarga videos o audios directamente desde YouTube")
 
+# Entrada de la URL del video
 url = st.text_input("Ingrese la URL del video de YouTube:")
 
-# Directorio temporal para guardar los archivos
+# Crear directorio para guardar descargas
 download_dir = "downloads"
 os.makedirs(download_dir, exist_ok=True)
 
+# Ruta del ejecutable de FFmpeg
+ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg")
+
+# Función para procesar la URL y descargar el contenido
 if url:
     try:
-        # Mostrar detalles del video
+        # Obtener información del video
         with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
             info = ydl.extract_info(url, download=False)
             st.image(info.get('thumbnail'), width=300)
             st.write(f"**Título:** {info.get('title')}")
             st.write(f"**Duración:** {info.get('duration')} segundos")
 
-        # Opciones para video y audio
+        # Opciones para descargar video
         ydl_opts_video = {
             'format': 'bestvideo+bestaudio/best',
             'outtmpl': f'{download_dir}/%(title)s.%(ext)s',
             'quiet': True,
         }
+
+        # Opciones para descargar solo audio
         ydl_opts_audio = {
             'format': 'bestaudio/best',
             'outtmpl': f'{download_dir}/%(title)s.%(ext)s',
@@ -35,10 +43,10 @@ if url:
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'ffmpeg_location': '/ffmpeg'  # Cambia esta ruta si FFmpeg no está en el PATH
+            'ffmpeg_location': ffmpeg_path  # Ruta a FFmpeg
         }
 
-        # Botones para descargar video o audio
+        # Botones de descarga
         if st.button("Descargar Video"):
             try:
                 with yt_dlp.YoutubeDL(ydl_opts_video) as ydl:
