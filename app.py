@@ -35,7 +35,7 @@ if url:
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'ffmpeg_location': '/ruta/a/ffmpeg'  # Cambia esta ruta si FFmpeg no está en el PATH
+            'ffmpeg_location': '/ffmpeg'  # Cambia esta ruta si FFmpeg no está en el PATH
         }
 
         # Botones para descargar video o audio
