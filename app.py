@@ -1,5 +1,5 @@
 import streamlit as st
-from pytube.__main__ import YouTube
+from pytube import YouTube
 from pytube.exceptions import PytubeError
 
 st.title("Youtube Video Downloader")
@@ -19,20 +19,26 @@ if url != '':
         except PytubeError as e:
             st.error(f"An error occurred while accessing video details: {e}")
         
-        video = yt.streams
-        if len(video) > 0:
-            downloaded, download_audio = False, False
+        video_streams = yt.streams.filter(progressive=True, file_extension='mp4')
+        audio_streams = yt.streams.filter(only_audio=True)
+        
+        if video_streams or audio_streams:
             download_video = st.button("Download Video")
-            if yt.streams.filter(only_audio=True):
-                download_audio = st.button("Download Audio Only")
+            download_audio = st.button("Download Audio Only")
+            
             if download_video:
-                video.get_lowest_resolution().download()
-                downloaded = True
+                try:
+                    video_streams.get_lowest_resolution().download()
+                    st.subheader("Video Download Complete")
+                except PytubeError as e:
+                    st.error(f"An error occurred while downloading the video: {e}")
+            
             if download_audio:
-                video.filter(only_audio=True).first().download()
-                downloaded = True
-            if downloaded:
-                st.subheader("Download Complete")
+                try:
+                    audio_streams.first().download()
+                    st.subheader("Audio Download Complete")
+                except PytubeError as e:
+                    st.error(f"An error occurred while downloading the audio: {e}")
         else:
             st.subheader("Sorry, this video cannot be downloaded")
     except PytubeError as e:
