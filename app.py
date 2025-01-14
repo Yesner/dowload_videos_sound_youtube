@@ -3,8 +3,9 @@ import yt_dlp
 import os
 import subprocess
 import sys
+import zipfile
 
-# Función para descargar FFmpeg
+# Función para descargar y descomprimir FFmpeg
 def download_ffmpeg():
     ffmpeg_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
     ffmpeg_zip = "ffmpeg.zip"
@@ -14,10 +15,15 @@ def download_ffmpeg():
     subprocess.run(["curl", "-L", ffmpeg_url, "-o", ffmpeg_zip], check=True)
 
     # Descomprimir FFmpeg
-    subprocess.run(["tar", "-xf", ffmpeg_zip, "-C", ffmpeg_dir], check=True)
+    with zipfile.ZipFile(ffmpeg_zip, 'r') as zip_ref:
+        zip_ref.extractall(ffmpeg_dir)
 
     # Mover el ejecutable a la carpeta correcta
-    os.rename(os.path.join(ffmpeg_dir, "ffmpeg.exe"), os.path.join(ffmpeg_dir, "ffmpeg.exe"))
+    for root, dirs, files in os.walk(ffmpeg_dir):
+        for file in files:
+            if file == "ffmpeg.exe":
+                os.rename(os.path.join(root, file), os.path.join(ffmpeg_dir, "ffmpeg.exe"))
+                break
 
 # Verificar si FFmpeg existe y descargarlo si no está presente
 ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg.exe")
