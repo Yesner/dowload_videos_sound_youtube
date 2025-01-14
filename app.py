@@ -16,6 +16,10 @@ os.makedirs(download_dir, exist_ok=True)
 # Ruta del ejecutable de FFmpeg
 ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg")
 
+# Verificar si FFmpeg existe
+if not os.path.isfile(ffmpeg_path):
+    st.error("FFmpeg no encontrado. Asegúrate de que FFmpeg esté en la carpeta 'ffmpeg'.")
+
 # Función para procesar la URL y descargar el contenido
 if url:
     try:
