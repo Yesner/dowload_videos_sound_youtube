@@ -1,38 +1,6 @@
 import streamlit as st
 import yt_dlp
 import os
-import subprocess
-import sys
-import zipfile
-
-# Función para descargar y descomprimir FFmpeg
-def download_ffmpeg():
-    ffmpeg_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
-    ffmpeg_zip = "ffmpeg.zip"
-    ffmpeg_dir = "ffmpeg"
-
-    # Descargar FFmpeg
-    subprocess.run(["curl", "-L", ffmpeg_url, "-o", ffmpeg_zip], check=True)
-
-    # Descomprimir FFmpeg
-    with zipfile.ZipFile(ffmpeg_zip, 'r') as zip_ref:
-        zip_ref.extractall(ffmpeg_dir)
-
-    # Mover el ejecutable a la carpeta correcta
-    for root, dirs, files in os.walk(ffmpeg_dir):
-        for file in files:
-            if file == "ffmpeg.exe":
-                os.rename(os.path.join(root, file), os.path.join(ffmpeg_dir, "ffmpeg.exe"))
-                break
-
-# Verificar si FFmpeg existe y descargarlo si no está presente
-ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg.exe")
-if not os.path.isfile(ffmpeg_path):
-    st.warning("FFmpeg no encontrado. Descargando FFmpeg...")
-    download_ffmpeg()
-    if not os.path.isfile(ffmpeg_path):
-        st.error("No se pudo descargar FFmpeg. Asegúrate de que FFmpeg esté en la carpeta 'ffmpeg'.")
-        sys.exit(1)
 
 # Título de la aplicación
 st.title("YouTube Video Downloader")
@@ -45,8 +13,15 @@ url = st.text_input("Ingrese la URL del video de YouTube:")
 download_dir = "downloads"
 os.makedirs(download_dir, exist_ok=True)
 
+# Ruta del ejecutable de FFmpeg
+ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg.exe")
+
+# Verificar si FFmpeg existe
+if not os.path.isfile(ffmpeg_path):
+    st.error("FFmpeg no encontrado. Asegúrate de que FFmpeg esté en la carpeta 'ffmpeg'.")
+
 # Función para procesar la URL y descargar el contenido
-if url:
+if url and os.path.isfile(ffmpeg_path):
     try:
         # Obtener información del video
         ydl_opts_info = {
