@@ -14,7 +14,7 @@ download_dir = "downloads"
 os.makedirs(download_dir, exist_ok=True)
 
 # Ruta del ejecutable de FFmpeg
-ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg")
+ffmpeg_path = os.path.join(os.getcwd(), "ffmpeg", "ffmpeg.exe")
 
 # Verificar si FFmpeg existe
 if not os.path.isfile(ffmpeg_path):
@@ -35,6 +35,7 @@ if url:
             'format': 'bestvideo+bestaudio/best',
             'outtmpl': f'{download_dir}/%(title)s.%(ext)s',
             'quiet': True,
+            'ffmpeg_location': ffmpeg_path  # Ruta a FFmpeg
         }
 
         # Opciones para descargar solo audio
