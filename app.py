@@ -6,7 +6,7 @@ import sys
 
 # Función para descargar FFmpeg
 def download_ffmpeg():
-    ffmpeg_url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n4.4-latest-win64-gpl-4.4.zip"
+    ffmpeg_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
     ffmpeg_zip = "ffmpeg.zip"
     ffmpeg_dir = "ffmpeg"
 
@@ -43,7 +43,14 @@ os.makedirs(download_dir, exist_ok=True)
 if url:
     try:
         # Obtener información del video
-        with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+        ydl_opts_info = {
+            'quiet': True,
+            'ffmpeg_location': ffmpeg_path,
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        }
+        with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
             info = ydl.extract_info(url, download=False)
             st.image(info.get('thumbnail'), width=300)
             st.write(f"**Título:** {info.get('title')}")
@@ -54,7 +61,10 @@ if url:
             'format': 'bestvideo+bestaudio/best',
             'outtmpl': f'{download_dir}/%(title)s.%(ext)s',
             'quiet': True,
-            'ffmpeg_location': ffmpeg_path  # Ruta a FFmpeg
+            'ffmpeg_location': ffmpeg_path,
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
         }
 
         # Opciones para descargar solo audio
@@ -67,7 +77,10 @@ if url:
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'ffmpeg_location': ffmpeg_path  # Ruta a FFmpeg
+            'ffmpeg_location': ffmpeg_path,
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
         }
 
         # Botones de descarga
